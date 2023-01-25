@@ -1,8 +1,11 @@
 import Carousel from 'nuka-carousel/lib/carousel';
 import ImageGallery from 'react-image-gallery';
 import Image from 'next/image'
-import {useState} from 'react'
+import {useRouter} from 'next/router'
+import {useEffect, useState} from 'react'
 import Head from 'next/head';
+import CustomEditor from '@components/Editor';
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 
 const images = [
   {
@@ -31,17 +34,33 @@ const images = [
 
 export default function Products(){
   const [index, setIndex] = useState(0)
+  const router = useRouter()
+  const { id:productId } = router.query
+  const [editorState, setEditorState] = useState<EditorState | undefined>(undefined)
+  // const productId = id
 
-    // return <ImageGallery items={images} />
-    return (
-      <>
-      <Head>
-        <meta property="og:url"                content="http://www.nytimes.com/2015/02/19/arts/international/when-great-minds-dont-think-alike.html" />
-        <meta property="og:type"               content="article" />
-        <meta property="og:title"              content="When Great Minds Don’t Think Alike" />
-        <meta property="og:description"        content="How much does culture influence creative thinking?" />
-        <meta property="og:image"              content="http://static01.nyt.com/images/2015/02/19/arts/international/19iht-btnumbers19A/19iht-btnumbers19A-facebookJumbo-v2.jpg" />
-      </Head>
+
+  useEffect(() => {
+    if( productId != null ){
+      fetch(`/api/get-product?id=${productId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if(data.items?.contents){
+          setEditorState(
+            EditorState.createWithContent(
+              convertFromRaw(JSON.parse(data.items.contents))
+            )
+          )
+        }else{
+          setEditorState(EditorState.createEmpty())
+        }
+      })
+    }
+  }, [productId])
+
+  // return <ImageGallery items={images} />
+  return (
+    <>
       <Carousel animation="fade" autoplay withoutControls wrapAround
             slideIndex={index}
             speed={10}
@@ -64,6 +83,12 @@ export default function Products(){
           </div>
         )}
       </div>
+      {
+        editorState != null &&
+        <CustomEditor editorState={editorState}
+          readOnly={true}
+        />
+      }
     </>
-    )
+  )
 }
