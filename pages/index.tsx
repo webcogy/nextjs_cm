@@ -45,7 +45,6 @@ export default function Home() {
           <input type="text" ref={inputRef} placeholder='name' />
           <button onClick={HandleClick}>Add Jacket</button>
         </div>
-
         <br />
         <div>
           <p>Product list</p>

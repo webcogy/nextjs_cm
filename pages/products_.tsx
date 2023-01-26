@@ -29,7 +29,7 @@ const images = [
 
 
 
-export default function Products(){
+export default function Products_(){
   const [index, setIndex] = useState(0)
 
     // return <ImageGallery items={images} />
