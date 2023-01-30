@@ -14,13 +14,20 @@ export default function Products(){
     }, [])
 
     return(
-        <div>
+        <div style={{fontSize:16, marginTop:36, marginBottom:36}}>
             {
                 products &&
                 products.map((item) => (
                     <div key={item.id}>
-                        <Image src={item.image_url ?? ''} width={300} height={200} alt={item.name} />
-                        {item.name}
+                        <Image
+                            src={item.image_url ?? ''}
+                            width={200}
+                            height={100}
+                            alt={item.name}
+                        />
+                        <span>{item.name}</span>
+                        <span>{item.price.toLocaleString('ko-KR')}원</span>
+                        <span>{item.category_id === 1 && '의류'}</span>
                     </div>
                 ))
             }
